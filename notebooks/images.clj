@@ -1,12 +1,34 @@
-;; # 🏞 Automatic Image Support
+;; # 🏞 Automatic Image Support for all mankind 9
 ^{:nextjournal.clerk/visibility #{:hide-ns}}
 (ns images
-  (:require [nextjournal.clerk :as clerk]
-            [clojure.java.io :as io])
-  (:import [java.net URL]
-           [java.nio.file Paths Files]
-           [java.awt.image BufferedImage]
-           [javax.imageio ImageIO]))
+  (:require
+    [nextjournal.clerk :as clerk]
+    [clojure.java.io :as io]
+    ;; math helpers, simple data manip helpers
+    [svg-clj.utils :as utils]
+    ;; all of the shape functions like rect, circle, polygon, etc.
+    [svg-clj.elements :as el]
+    ;; all of the transforms, including path specific fns
+    [svg-clj.transforms :as tf]
+    ;; shapes built from other shapes, AND the svg container fn
+    [svg-clj.composites :as comp :refer [svg]]
+    ;; draw elements using path instead, and has the 'commands' path DSL
+    ;; also has arc and bezier drawing fns
+    [svg-clj.path :as path]
+    ;; parametric curve fns and point list generators useful for layouts
+    [svg-clj.parametric :as p]
+    ;; layout functions like distribute-linear and distribute-along-curve
+    [svg-clj.layout :as lo]
+    ;; when in CLJ context, use cider-show, show, save-svg, load-svg
+    ;; to help with the dev. process
+    #?(:clj [svg-clj.tools :as tools])
+  )
+  (:import
+    [java.net URL]
+    [java.nio.file Paths Files]
+    [java.awt.image BufferedImage]
+    [javax.imageio ImageIO])
+)
 
 ;; Clerk now has built-in support for the
 ;; `java.awt.image.BufferedImage` class, which is the native image
@@ -73,3 +95,42 @@
 (ImageIO/read (URL. "https://imgs.xkcd.com/comics/real_programmers.png"))
 
 ;; Thanks for reading, and — as always — let us know what you make with Clerk!
+
+;; # Kevin's Section!!!
+
+;; I'm trying to experiment w/SVG rendering right now, so let's see if I can make
+;; the github squares visualization you always see
+(def values [1 0 1 1 0 1 1 0 0 1])
+
+;; The "rule_30.clj" notebook can definitely do this. It's about cell automata,
+;; & so has some custom viewers that would be pretty good for this
+
+(clerk/html "<svg version=\"1.1\" width=\"300\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\"> <rect width=\"100%\" height=\"100%\" fill=\"red\" /><circle cx=\"150\" cy=\"100\" r=\"80\" fill=\"green\" /></svg>")
+
+;; # svg-clj?
+
+;; The main clerk site listed
+;; [this tweet](https://twitter.com/RustyVermeer/status/1544901494675099649?cxt=HHwWgsCisazuy_AqAAAA),
+;; showing someone writing up some clojure to draw SVGs in nice patterns with
+;; parameterized values. It looks like this is the
+;; [adam-james-v/svg-clj repo](https://github.com/adam-james-v/svg-clj) made by
+;; [adam-james-v](https://github.com/adam-james-v). I can import this
+;; successfully, but sadly that hiccup code isn't being interpretted by clerk as
+;; something it should render. That's where I ended so far.
+
+(clerk/html (el/circle 50))
+
+(def circle-translated (tf/translate (el/circle 50) [25 25]))
+(clerk/html circle-translated)
+
+;; ### Hiccup (from introduction.clj)
+
+(clerk/html
+  [:table
+    [:tr [:td "◤"] [:td "◥"]]
+    [:tr [:td "◉"] [:td "◉"]]
+    [:tr [:td "◣"] [:td "◢"]]
+  ]
+)
+
+;; # THE END

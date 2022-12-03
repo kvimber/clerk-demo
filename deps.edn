@@ -29,6 +29,9 @@
 
         org.babashka/cli {:mvn/version "0.5.40"}
 
+        ;; https://github.com/adam-james-v/svg-clj
+        io.github.adam-james-v/svg-clj {:mvn/version "0.0.1-SNAPSHOT"}
+
         ;; silence log warnings
         org.slf4j/slf4j-nop {:mvn/version "1.7.36"}}
 
